@@ -81,6 +81,10 @@ public:
     //Render button sprite
     void render();
 
+    //Prevent to press big button
+    //with small button simultaneously
+    void releaseWhenSmall();
+
 private:
     //Top left position
     SDL_Point bPosition;
@@ -89,7 +93,7 @@ private:
     ButtonSprite bCurrentSprite;
 };
 
-//Mouse button big
+//Mouse button small
 class SmallButton
 {
 public:
@@ -315,6 +319,11 @@ void BigButton::render()
     spriteSheetTexture.render( bPosition.x, bPosition.y, &spriteClip[ bCurrentSprite ] );
 }
 
+void BigButton::releaseWhenSmall()
+{
+    bCurrentSprite = BUTTON_BIG_MOUSE_OUT;
+}
+
 //SmallButton Constructor
 SmallButton::SmallButton()
 {
@@ -331,7 +340,7 @@ void SmallButton::setTopLeft( int x, int y )
     bPosition.y = y;
 }
 
-//Small handle mouse events
+//SmallButton handle mouse events
 void SmallButton::mouseEvents( SDL_Event* e )
 {
     //If mouse event happened
@@ -380,10 +389,19 @@ void SmallButton::mouseEvents( SDL_Event* e )
             {
             case SDL_MOUSEMOTION:
                 bCurrentSprite = BUTTON_SMALL_MOUSE_OVER;
+                for (int i = 0; i < totalBigButtons; i++)
+                {
+                    bigButtons[i].releaseWhenSmall();
+                }
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
                 bCurrentSprite = BUTTON_SMALL_MOUSE_DOWN;
+                for (int i = 0; i < totalBigButtons; i++)
+                {
+                    bigButtons[i].releaseWhenSmall();
+                }
+                break;
                 break;
 
             case SDL_MOUSEBUTTONUP:
