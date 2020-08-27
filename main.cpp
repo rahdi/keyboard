@@ -46,6 +46,12 @@ public:
     //Destroy texture;
     void destroy();
 
+    //Set blending
+    void blending( SDL_BlendMode b );
+
+    //Set transparency
+    void transparency( Uint8 a );
+
     //Render texture at specific point
     void render( int x, int y, SDL_Rect* sourceRectangle = NULL );
 
@@ -60,9 +66,6 @@ private:
     //Image dimensions
     int width;
     int height;
-
-    //Transparency of the texture
-    int transparency;
 };
 
 //Mouse button big
@@ -75,8 +78,8 @@ public:
     //Set top left position
     void setTopLeft( int x, int y );
 
-    //Handle mouse events
-    void mouseEvents( SDL_Event* e );
+    //Handle events
+    void events( SDL_Event* e );
 
     //Render button sprite
     void render();
@@ -104,7 +107,7 @@ public:
     void setTopLeft( int x, int y );
 
     //Handle mouse events
-    void mouseEvents( SDL_Event* e );
+    void events( SDL_Event* e );
 
     //Render button sprite
     void render();
@@ -121,11 +124,12 @@ private:
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
-//Mouse button sprites
+//Button sprites
 SDL_Rect spriteClip[ BUTTON_SPRITE_TOTAL ];
 
 //Sprite sheet
-Texture spriteSheetTexture;
+Texture frontLayerTexture;
+Texture backgroundTexture;
 
 //Button objects
 BigButton bigButtons[ totalBigButtons ];
@@ -206,6 +210,17 @@ void Texture::destroy()
         height = 0;
     }
 }
+//Set blending
+void Texture::blending( SDL_BlendMode b )
+{
+    SDL_SetTextureBlendMode( hTexture, b );
+}
+
+//Set transparency
+void Texture::transparency( Uint8 a )
+{
+    SDL_SetTextureAlphaMod( hTexture, a );
+}
 
 void Texture::render( int x, int y, SDL_Rect* sourceRectangle )
 {
@@ -251,8 +266,8 @@ void BigButton::setTopLeft( int x, int y )
     bPosition.y = y;
 }
 
-//BigButton handle mouse events
-void BigButton::mouseEvents( SDL_Event* e )
+//BigButton handle events
+void BigButton::events( SDL_Event* e )
 {
     //If mouse event happened
     if( e->type == SDL_MOUSEMOTION ||
@@ -312,11 +327,26 @@ void BigButton::mouseEvents( SDL_Event* e )
             }
         }
     }
-}
 
+    //If keyboard events happened
+    if( e->type == SDL_KEYDOWN)
+    {
+        if( e->key.keysym.sym == SDLK_1 )
+        {
+            frontLayerTexture.transparency( 0 );
+        }
+    }
+    if( e->type == SDL_KEYUP)
+    {
+        if( e->key.keysym.sym == SDLK_1 )
+        {
+            frontLayerTexture.transparency( 255 );
+        }
+    }
+}
 void BigButton::render()
 {
-    spriteSheetTexture.render( bPosition.x, bPosition.y, &spriteClip[ bCurrentSprite ] );
+    frontLayerTexture.render( bPosition.x, bPosition.y, &spriteClip[ bCurrentSprite ] );
 }
 
 void BigButton::releaseWhenSmall()
@@ -341,7 +371,7 @@ void SmallButton::setTopLeft( int x, int y )
 }
 
 //SmallButton handle mouse events
-void SmallButton::mouseEvents( SDL_Event* e )
+void SmallButton::events( SDL_Event* e )
 {
     //If mouse event happened
     if( e->type == SDL_MOUSEMOTION ||
@@ -414,7 +444,7 @@ void SmallButton::mouseEvents( SDL_Event* e )
 
 void SmallButton::render()
 {
-    spriteSheetTexture.render( bPosition.x, bPosition.y, &spriteClip[ bCurrentSprite ] );
+    frontLayerTexture.render( bPosition.x, bPosition.y, &spriteClip[ bCurrentSprite ] );
 }
 
 
@@ -456,12 +486,19 @@ int main( int argc, char* args[] )
                 else
                 {
                     //Load images
-                    if( !spriteSheetTexture.loadImage( "images/board.png" ) )
+                    if( !frontLayerTexture.loadImage( "images/board.png" ) )
+                    {
+                        printf( "Error with loading images!\n", SDL_GetError() );
+                    }
+                    else if( !backgroundTexture.loadImage( "images/board.png" ) )
                     {
                         printf( "Error with loading images!\n", SDL_GetError() );
                     }
                     else
                     {
+                        //Set standard blending
+                        frontLayerTexture.blending( SDL_BLENDMODE_BLEND );
+
                         //Set background sprite
                         spriteClip[ BUTTON_BACKGROUND ].x = 0;
                         spriteClip[ BUTTON_BACKGROUND ].y = 0;
@@ -541,11 +578,11 @@ int main( int argc, char* args[] )
                                 //Handle button events
                                 for( int i = 0; i < totalBigButtons; ++i )
                                 {
-                                    bigButtons[ i ].mouseEvents( &e );
+                                    bigButtons[ i ].events( &e );
                                 }
                                 for( int i = 0; i < totalSmallButtons; ++i )
                                 {
-                                    smallButtons[ i ].mouseEvents( &e );
+                                    smallButtons[ i ].events( &e );
                                 }
 
                             }
@@ -555,7 +592,7 @@ int main( int argc, char* args[] )
                             SDL_RenderClear( renderer );
 
                             //Render textures to screen
-                            spriteSheetTexture.render( 0, 0, &spriteClip[ BUTTON_BACKGROUND ] );
+                            backgroundTexture.render( 0, 0, &spriteClip[ BUTTON_BACKGROUND ] );
 
                             for ( int i = 0; i < totalBigButtons; i++ )
                             {
@@ -577,7 +614,8 @@ int main( int argc, char* args[] )
     }
 
     //closing SDL
-    spriteSheetTexture.destroy();
+    frontLayerTexture.destroy();
+    backgroundTexture.destroy();
     SDL_DestroyWindow( window );
     SDL_DestroyRenderer( renderer );
     window = NULL;
