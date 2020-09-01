@@ -2,6 +2,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <SDL2/SDL_mixer.h>
+#include <windows.h>
 
 using namespace std;
 
@@ -78,8 +80,11 @@ public:
     //Set top left position
     void setTopLeft( int x, int y );
 
-    //Handle events
-    void events( SDL_Event* e );
+    //Handle mouse events
+    void mouseEvents( SDL_Event* e );
+
+    //Set current sprite when key pressed
+    void keyPressed( bool z );
 
     //Render button sprite
     void render();
@@ -107,7 +112,10 @@ public:
     void setTopLeft( int x, int y );
 
     //Handle mouse events
-    void events( SDL_Event* e );
+    void mouseEvents( SDL_Event* e );
+
+    //Set current sprite when key pressed
+    void keyPressed( bool z );
 
     //Render button sprite
     void render();
@@ -134,6 +142,34 @@ Texture backgroundTexture;
 //Button objects
 BigButton bigButtons[ totalBigButtons ];
 SmallButton smallButtons[ totalSmallButtons ];
+
+//Sounds
+Mix_Chunk *c4 = NULL;
+Mix_Chunk *d4 = NULL;
+Mix_Chunk *e4 = NULL;
+Mix_Chunk *f4 = NULL;
+Mix_Chunk *g4 = NULL;
+Mix_Chunk *a4 = NULL;
+Mix_Chunk *h4 = NULL;
+Mix_Chunk *c5 = NULL;
+Mix_Chunk *d5 = NULL;
+Mix_Chunk *e5 = NULL;
+Mix_Chunk *f5 = NULL;
+Mix_Chunk *g5 = NULL;
+Mix_Chunk *a5 = NULL;
+Mix_Chunk *h5 = NULL;
+Mix_Chunk *c6 = NULL;
+Mix_Chunk *cis4 = NULL;
+Mix_Chunk *dis4 = NULL;
+Mix_Chunk *fis4 = NULL;
+Mix_Chunk *gis4 = NULL;
+Mix_Chunk *ais4 = NULL;
+Mix_Chunk *cis5 = NULL;
+Mix_Chunk *dis5 = NULL;
+Mix_Chunk *fis5 = NULL;
+Mix_Chunk *gis5 = NULL;
+Mix_Chunk *ais5 = NULL;
+
 
 //Constructor
 Texture::Texture()
@@ -267,7 +303,7 @@ void BigButton::setTopLeft( int x, int y )
 }
 
 //BigButton handle events
-void BigButton::events( SDL_Event* e )
+void BigButton::mouseEvents( SDL_Event* e )
 {
     //If mouse event happened
     if( e->type == SDL_MOUSEMOTION ||
@@ -327,23 +363,20 @@ void BigButton::events( SDL_Event* e )
             }
         }
     }
+}
 
-    //If keyboard events happened
-    if( e->type == SDL_KEYDOWN)
+void BigButton::keyPressed( bool z )
+{
+    if ( z == true )
     {
-        if( e->key.keysym.sym == SDLK_1 )
-        {
-            frontLayerTexture.transparency( 0 );
-        }
+        bCurrentSprite = BUTTON_BIG_MOUSE_DOWN;
     }
-    if( e->type == SDL_KEYUP)
+    else if ( z == false )
     {
-        if( e->key.keysym.sym == SDLK_1 )
-        {
-            frontLayerTexture.transparency( 255 );
-        }
+        bCurrentSprite = BUTTON_BIG_MOUSE_OUT;
     }
 }
+
 void BigButton::render()
 {
     frontLayerTexture.render( bPosition.x, bPosition.y, &spriteClip[ bCurrentSprite ] );
@@ -371,7 +404,7 @@ void SmallButton::setTopLeft( int x, int y )
 }
 
 //SmallButton handle mouse events
-void SmallButton::events( SDL_Event* e )
+void SmallButton::mouseEvents( SDL_Event* e )
 {
     //If mouse event happened
     if( e->type == SDL_MOUSEMOTION ||
@@ -432,13 +465,24 @@ void SmallButton::events( SDL_Event* e )
                     bigButtons[i].releaseWhenSmall();
                 }
                 break;
-                break;
 
             case SDL_MOUSEBUTTONUP:
                 bCurrentSprite = BUTTON_SMALL_MOUSE_OUT;
                 break;
             }
         }
+    }
+}
+
+void SmallButton::keyPressed( bool z )
+{
+    if ( z == true )
+    {
+        bCurrentSprite = BUTTON_SMALL_MOUSE_DOWN;
+    }
+    else if ( z == false )
+    {
+        bCurrentSprite = BUTTON_SMALL_MOUSE_OUT;
     }
 }
 
@@ -483,10 +527,145 @@ int main( int argc, char* args[] )
                 {
                     printf( "IMG_Init error!\n", SDL_GetError() );
                 }
+                //Initialize SDL_mixer
+                else if ( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+                {
+                    printf( "SDL_mixer error!\n", Mix_GetError() );
+                }
                 else
                 {
+                    //Allocate channels
+                    Mix_AllocateChannels( totalBigButtons + totalSmallButtons );
+
+                    //Load sound files
+                    c4 = Mix_LoadWAV( "sound/c4.wav" );
+                    d4 = Mix_LoadWAV( "sound/d4.wav" );
+                    e4 = Mix_LoadWAV( "sound/e4.wav" );
+                    f4 = Mix_LoadWAV( "sound/f4.wav" );
+                    g4 = Mix_LoadWAV( "sound/g4.wav" );
+                    a4 = Mix_LoadWAV( "sound/a4.wav" );
+                    h4 = Mix_LoadWAV( "sound/h4.wav" );
+                    c5 = Mix_LoadWAV( "sound/c5.wav" );
+                    d5 = Mix_LoadWAV( "sound/d5.wav" );
+                    e5 = Mix_LoadWAV( "sound/e5.wav" );
+                    f5 = Mix_LoadWAV( "sound/f5.wav" );
+                    g5 = Mix_LoadWAV( "sound/g5.wav" );
+                    a5 = Mix_LoadWAV( "sound/a5.wav" );
+                    h5 = Mix_LoadWAV( "sound/h5.wav" );
+                    c6 = Mix_LoadWAV( "sound/c6.wav" );
+                    cis4 = Mix_LoadWAV( "sound/cis4.wav" );
+                    dis4 = Mix_LoadWAV( "sound/dis4.wav" );
+                    fis4 = Mix_LoadWAV( "sound/fis4.wav" );
+                    gis4 = Mix_LoadWAV( "sound/gis4.wav" );
+                    ais4 = Mix_LoadWAV( "sound/ais4.wav" );
+                    cis5 = Mix_LoadWAV( "sound/cis5.wav" );
+                    dis5 = Mix_LoadWAV( "sound/dis5.wav" );
+                    fis5 = Mix_LoadWAV( "sound/fis5.wav" );
+                    gis5 = Mix_LoadWAV( "sound/gis5.wav" );
+                    ais5 = Mix_LoadWAV( "sound/ais5.wav" );
+                    if ( c4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( d4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( e4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( f4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( g4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( a4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( h4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( c5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( d5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( e5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( f5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( g5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( a5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( h5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( c6 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( cis4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( dis4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( fis4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( gis4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( ais4 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( cis5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( dis5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( fis5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( gis5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+                    else if ( ais5 == NULL )
+                    {
+                        printf( "Mix_LoadWAV error!\n", Mix_GetError() );
+                    }
+
                     //Load images
-                    if( !frontLayerTexture.loadImage( "images/board.png" ) )
+                    else if( !frontLayerTexture.loadImage( "images/board.png" ) )
                     {
                         printf( "Error with loading images!\n", SDL_GetError() );
                     }
@@ -575,14 +754,365 @@ int main( int argc, char* args[] )
                                     quit = true;
                                 }
 
-                                //Handle button events
+                                //Handle button mouse events
                                 for( int i = 0; i < totalBigButtons; ++i )
                                 {
-                                    bigButtons[ i ].events( &e );
+                                    bigButtons[ i ].mouseEvents( &e );
                                 }
                                 for( int i = 0; i < totalSmallButtons; ++i )
                                 {
-                                    smallButtons[ i ].events( &e );
+                                    smallButtons[ i ].mouseEvents( &e );
+                                }
+
+                                //Handle keyboard events
+                                bool keyDown = NULL;
+                                if( e.type == SDL_KEYDOWN)
+                                {
+                                    keyDown = true;
+
+                                    switch ( e.key.keysym.sym )
+                                    {
+                                    case SDLK_1:
+                                        frontLayerTexture.transparency( 0 );
+                                        break;
+
+                                    case SDLK_z:
+                                        bigButtons[0].keyPressed( keyDown );
+                                        if ( Mix_Playing( 0 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 0, c4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_x:
+                                        bigButtons[1].keyPressed( keyDown );
+                                        if ( Mix_Playing( 1 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 1, d4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_c:
+                                        bigButtons[2].keyPressed( keyDown );
+                                        if ( Mix_Playing( 2 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 2, e4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_v:
+                                        bigButtons[3].keyPressed( keyDown );
+                                        if ( Mix_Playing( 3 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 3, f4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_b:
+                                        bigButtons[4].keyPressed( keyDown );
+                                        if ( Mix_Playing( 4 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 4, g4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_n:
+                                        bigButtons[5].keyPressed( keyDown );
+                                        if ( Mix_Playing( 5 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 5, a4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_m:
+                                        bigButtons[6].keyPressed( keyDown );
+                                        if ( Mix_Playing( 6 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 6, h4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_t:
+                                        bigButtons[7].keyPressed( keyDown );
+                                        if ( Mix_Playing( 7 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 7, c5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_y:
+                                        bigButtons[8].keyPressed( keyDown );
+                                        if ( Mix_Playing( 8 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 8, d5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_u:
+                                        bigButtons[9].keyPressed( keyDown );
+                                        if ( Mix_Playing( 9 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 9, e5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_i:
+                                        bigButtons[10].keyPressed( keyDown );
+                                        if ( Mix_Playing( 10 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 10, f5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_o:
+                                        bigButtons[11].keyPressed( keyDown );
+                                        if ( Mix_Playing( 11 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 11, g5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_p:
+                                        bigButtons[12].keyPressed( keyDown );
+                                        if ( Mix_Playing( 12 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 12, a5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_LEFTBRACKET:
+                                        bigButtons[13].keyPressed( keyDown );
+                                        if ( Mix_Playing( 13 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 13, h5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_RIGHTBRACKET:
+                                        bigButtons[14].keyPressed( keyDown );
+                                        if ( Mix_Playing( 14 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 14, c6, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_s:
+                                        smallButtons[0].keyPressed( keyDown );
+                                        if ( Mix_Playing( 15 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 15, cis4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_d:
+                                        smallButtons[1].keyPressed( keyDown );
+                                        if ( Mix_Playing( 16 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 16, dis4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_g:
+                                        smallButtons[2].keyPressed( keyDown );
+                                        if ( Mix_Playing( 17 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 17, fis4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_h:
+                                        smallButtons[3].keyPressed( keyDown );
+                                        if ( Mix_Playing( 18 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 18, gis4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_j:
+                                        smallButtons[4].keyPressed( keyDown );
+                                        if ( Mix_Playing( 19 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 19, ais4, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_6:
+                                        smallButtons[5].keyPressed( keyDown );
+                                        if ( Mix_Playing( 20 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 20, cis5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_7:
+                                        smallButtons[6].keyPressed( keyDown );
+                                        if ( Mix_Playing( 21 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 21, dis5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_9:
+                                        smallButtons[7].keyPressed( keyDown );
+                                        if ( Mix_Playing( 22 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 22, fis5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_0:
+                                        smallButtons[8].keyPressed( keyDown );
+                                        if ( Mix_Playing( 23 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 23, gis5, -1 );
+                                        }
+                                        break;
+
+                                    case SDLK_MINUS:
+                                        smallButtons[9].keyPressed( keyDown );
+                                        if ( Mix_Playing( 24 ) == 0 )
+                                        {
+                                            Mix_PlayChannel( 24, ais5, -1 );
+                                        }
+                                        break;
+                                    }
+                                }
+
+                                if( e.type == SDL_KEYUP)
+                                {
+                                    keyDown = false;
+
+                                    switch ( e.key.keysym.sym )
+                                    {
+                                    case SDLK_1:
+                                        frontLayerTexture.transparency( 255 );
+                                        break;
+
+                                    case SDLK_z:
+                                        bigButtons[0].keyPressed( keyDown );
+                                        Mix_HaltChannel( 0 );
+                                        break;
+
+                                    case SDLK_x:
+                                        bigButtons[1].keyPressed( keyDown );
+                                        Mix_HaltChannel( 1 );
+                                        break;
+
+                                    case SDLK_c:
+                                        bigButtons[2].keyPressed( keyDown );
+                                        Mix_HaltChannel( 2 );
+                                        break;
+
+                                    case SDLK_v:
+                                        bigButtons[3].keyPressed( keyDown );
+                                        Mix_HaltChannel( 3 );
+                                        break;
+
+                                    case SDLK_b:
+                                        bigButtons[4].keyPressed( keyDown );
+                                        Mix_HaltChannel( 4 );
+                                        break;
+
+                                    case SDLK_n:
+                                        bigButtons[5].keyPressed( keyDown );
+                                        Mix_HaltChannel( 5 );
+                                        break;
+
+                                    case SDLK_m:
+                                        bigButtons[6].keyPressed( keyDown );
+                                        Mix_HaltChannel( 6 );
+                                        break;
+
+                                    case SDLK_t:
+                                        bigButtons[7].keyPressed( keyDown );
+                                        Mix_HaltChannel( 7 );
+                                        break;
+
+                                    case SDLK_y:
+                                        bigButtons[8].keyPressed( keyDown );
+                                        Mix_HaltChannel( 8 );
+                                        break;
+
+                                    case SDLK_u:
+                                        bigButtons[9].keyPressed( keyDown );
+                                        Mix_HaltChannel( 9 );
+                                        break;
+
+                                    case SDLK_i:
+                                        bigButtons[10].keyPressed( keyDown );
+                                        Mix_HaltChannel( 10 );
+                                        break;
+
+                                    case SDLK_o:
+                                        bigButtons[11].keyPressed( keyDown );
+                                        Mix_HaltChannel( 11 );
+                                        break;
+
+                                    case SDLK_p:
+                                        bigButtons[12].keyPressed( keyDown );
+                                        Mix_HaltChannel( 12 );
+                                        break;
+
+                                    case SDLK_LEFTBRACKET:
+                                        bigButtons[13].keyPressed( keyDown );
+                                        Mix_HaltChannel( 13 );
+                                        break;
+
+                                    case SDLK_RIGHTBRACKET:
+                                        bigButtons[14].keyPressed( keyDown );
+                                        Mix_HaltChannel( 14 );
+                                        break;
+
+                                    case SDLK_s:
+                                        smallButtons[0].keyPressed( keyDown );
+                                        Mix_HaltChannel( 15 );
+                                        break;
+
+                                    case SDLK_d:
+                                        smallButtons[1].keyPressed( keyDown );
+                                        Mix_HaltChannel( 16 );
+                                        break;
+
+                                    case SDLK_g:
+                                        smallButtons[2].keyPressed( keyDown );
+                                        Mix_HaltChannel( 17 );
+                                        break;
+
+                                    case SDLK_h:
+                                        smallButtons[3].keyPressed( keyDown );
+                                        Mix_HaltChannel( 18 );
+                                        break;
+
+                                    case SDLK_j:
+                                        smallButtons[4].keyPressed( keyDown );
+                                        Mix_HaltChannel( 19 );
+                                        break;
+
+                                    case SDLK_6:
+                                        smallButtons[5].keyPressed( keyDown );
+                                        Mix_HaltChannel( 20 );
+                                        break;
+
+                                    case SDLK_7:
+                                        smallButtons[6].keyPressed( keyDown );
+                                        Mix_HaltChannel( 21 );
+                                        break;
+
+                                    case SDLK_9:
+                                        smallButtons[7].keyPressed( keyDown );
+                                        Mix_HaltChannel( 22 );
+                                        break;
+
+                                    case SDLK_0:
+                                        smallButtons[8].keyPressed( keyDown );
+                                        Mix_HaltChannel( 23 );
+                                        break;
+
+                                    case SDLK_MINUS:
+                                        smallButtons[9].keyPressed( keyDown );
+                                        Mix_HaltChannel( 24 );
+                                        break;
+                                    }
                                 }
 
                             }
@@ -613,15 +1143,66 @@ int main( int argc, char* args[] )
         }
     }
 
-    //closing SDL
+//closing SDL
     frontLayerTexture.destroy();
     backgroundTexture.destroy();
     SDL_DestroyWindow( window );
     SDL_DestroyRenderer( renderer );
+    Mix_FreeChunk( c4 );
+    Mix_FreeChunk( d4 );
+    Mix_FreeChunk( e4 );
+    Mix_FreeChunk( f4 );
+    Mix_FreeChunk( g4 );
+    Mix_FreeChunk( a4 );
+    Mix_FreeChunk( h4 );
+    Mix_FreeChunk( c5 );
+    Mix_FreeChunk( d5 );
+    Mix_FreeChunk( e5 );
+    Mix_FreeChunk( f5 );
+    Mix_FreeChunk( g5 );
+    Mix_FreeChunk( a5 );
+    Mix_FreeChunk( h5 );
+    Mix_FreeChunk( c6 );
+    Mix_FreeChunk( cis4 );
+    Mix_FreeChunk( dis4 );
+    Mix_FreeChunk( fis4 );
+    Mix_FreeChunk( gis4 );
+    Mix_FreeChunk( ais4 );
+    Mix_FreeChunk( cis5 );
+    Mix_FreeChunk( dis5 );
+    Mix_FreeChunk( fis5 );
+    Mix_FreeChunk( gis5 );
+    Mix_FreeChunk( ais5 );
+    c4 = NULL;
+    d4 = NULL;
+    e4 = NULL;
+    f4 = NULL;
+    g4 = NULL;
+    a4 = NULL;
+    h4 = NULL;
+    c5 = NULL;
+    d5 = NULL;
+    e5 = NULL;
+    f5 = NULL;
+    g5 = NULL;
+    a5 = NULL;
+    h5 = NULL;
+    c6 = NULL;
+    cis4 = NULL;
+    dis4 = NULL;
+    fis4 = NULL;
+    gis4 = NULL;
+    ais4 = NULL;
+    cis5 = NULL;
+    dis5 = NULL;
+    fis5 = NULL;
+    gis5 = NULL;
+    ais5 = NULL;
     window = NULL;
     renderer = NULL;
     IMG_Quit();
     SDL_Quit();
+    Mix_Quit();
 
     return 0;
 }
