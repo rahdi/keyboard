@@ -535,7 +535,7 @@ int main( int argc, char* args[] )
                 else
                 {
                     //Allocate channels
-                    Mix_AllocateChannels( totalBigButtons + totalSmallButtons );
+                    Mix_AllocateChannels( totalBigButtons + totalSmallButtons + 1);
 
                     //Load sound files
                     c4 = Mix_LoadWAV( "sound/c4.wav" );
@@ -754,7 +754,7 @@ int main( int argc, char* args[] )
                                     quit = true;
                                 }
 
-                                //Handle button mouse events
+                                //Handle button sprite mouse events
                                 for( int i = 0; i < totalBigButtons; ++i )
                                 {
                                     bigButtons[ i ].mouseEvents( &e );
@@ -764,13 +764,222 @@ int main( int argc, char* args[] )
                                     smallButtons[ i ].mouseEvents( &e );
                                 }
 
+                                //Handle remaining mouse events
+                                if( e.type == SDL_MOUSEBUTTONDOWN
+                                        || e.type == SDL_MOUSEBUTTONUP )
+                                {
+                                    int x, y;
+                                    SDL_GetMouseState( &x, &y );
+
+
+                                    //Transparency
+                                    if( y < 100 )
+                                    {
+                                        if( e.type == SDL_MOUSEBUTTONDOWN )
+                                        {
+                                            frontLayerTexture.transparency( 0 );
+                                        }
+                                    }
+                                    //Button sounds
+                                    else
+                                    {
+                                        //Small buttons
+                                        if( y <= 100 + bSmallHeight )
+                                        {
+                                            if( x >= 45+0*bBigWidth && x <= 45+0*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, cis4, -1 );
+                                                }
+                                            }
+                                            if( x >= 45+1*bBigWidth && x <= 45+1*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, dis4, -1 );
+                                                }
+                                            }
+                                            if( x >= 45+3*bBigWidth && x <= 45+3*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, fis4, -1 );
+                                                }
+                                            }
+                                            if( x >= 45+4*bBigWidth && x <= 45+4*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, gis4, -1 );
+                                                }
+                                            }
+                                            if( x >= 45+5*bBigWidth && x <= 45+5*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, ais4, -1 );
+                                                }
+                                            }
+                                            if( x >= 45+7*bBigWidth && x <= 45+7*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, cis5, -1 );
+                                                }
+                                            }
+                                            if( x >= 45+8*bBigWidth && x <= 45+8*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, dis5, -1 );
+                                                }
+                                            }
+                                            if( x >= 45+10*bBigWidth && x <= 45+10*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, fis5, -1 );
+                                                }
+                                            }
+                                            if( x >= 45+11*bBigWidth && x <= 45+11*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, gis5, -1 );
+                                                }
+                                            }
+                                            if( x >= 45+12*bBigWidth && x <= 45+12*bBigWidth+bSmallWidth)
+                                            {
+                                                if ( Mix_Playing( 25 ) == 0 )
+                                                {
+                                                    Mix_PlayChannel( 25, ais5, -1 );
+                                                }
+                                            }
+                                        }
+
+                                        //Big buttons
+                                        if( x >= 0*bBigWidth && x < 1*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, c4, -1 );
+                                            }
+                                        }
+                                        if( x >= 1*bBigWidth && x < 2*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, d4, -1 );
+                                            }
+                                        }
+                                        if( x >= 2*bBigWidth && x < 3*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, e4, -1 );
+                                            }
+                                        }
+                                        if( x >= 3*bBigWidth && x < 4*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, f4, -1 );
+                                            }
+                                        }
+                                        if( x >= 4*bBigWidth && x < 5*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, g4, -1 );
+                                            }
+                                        }
+                                        if( x >= 5*bBigWidth && x < 6*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, a4, -1 );
+                                            }
+                                        }
+                                        if( x >= 6*bBigWidth && x < 7*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, h4, -1 );
+                                            }
+                                        }
+                                        if( x >= 7*bBigWidth && x < 8*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, c5, -1 );
+                                            }
+                                        }
+                                        if( x >= 8*bBigWidth && x < 9*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, d5, -1 );
+                                            }
+                                        }
+                                        if( x >= 9*bBigWidth && x < 10*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, e5, -1 );
+                                            }
+                                        }
+                                        if( x >= 10*bBigWidth && x < 11*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, f5, -1 );
+                                            }
+                                        }
+                                        if( x >= 11*bBigWidth && x < 12*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, g5, -1 );
+                                            }
+                                        }
+                                        if( x >= 12*bBigWidth && x < 13*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, a5, -1 );
+                                            }
+                                        }
+                                        if( x >= 13*bBigWidth && x < 14*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, h5, -1 );
+                                            }
+                                        }
+                                        if( x >= 14*bBigWidth && x < 15*bBigWidth )
+                                        {
+                                            if ( Mix_Playing( 25 ) == 0 )
+                                            {
+                                                Mix_PlayChannel( 25, c6, -1 );
+                                            }
+                                        }
+                                    }
+
+                                    if ( e.type == SDL_MOUSEBUTTONUP )
+                                    {
+                                        frontLayerTexture.transparency( 255 );
+                                        Mix_ExpireChannel( 25, 50 );
+                                    }
+                                }
+
                                 //Handle keyboard events
                                 bool keyDown = NULL;
                                 if( e.type == SDL_KEYDOWN)
                                 {
                                     keyDown = true;
 
-                                    switch ( e.key.keysym.sym )
+                                    switch( e.key.keysym.sym )
                                     {
                                     case SDLK_1:
                                         frontLayerTexture.transparency( 0 );
@@ -778,7 +987,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_z:
                                         bigButtons[0].keyPressed( keyDown );
-                                        if ( Mix_Playing( 0 ) == 0 )
+                                        if( Mix_Playing( 0 ) == 0 )
                                         {
                                             Mix_PlayChannel( 0, c4, -1 );
                                         }
@@ -786,7 +995,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_x:
                                         bigButtons[1].keyPressed( keyDown );
-                                        if ( Mix_Playing( 1 ) == 0 )
+                                        if( Mix_Playing( 1 ) == 0 )
                                         {
                                             Mix_PlayChannel( 1, d4, -1 );
                                         }
@@ -794,7 +1003,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_c:
                                         bigButtons[2].keyPressed( keyDown );
-                                        if ( Mix_Playing( 2 ) == 0 )
+                                        if( Mix_Playing( 2 ) == 0 )
                                         {
                                             Mix_PlayChannel( 2, e4, -1 );
                                         }
@@ -802,7 +1011,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_v:
                                         bigButtons[3].keyPressed( keyDown );
-                                        if ( Mix_Playing( 3 ) == 0 )
+                                        if( Mix_Playing( 3 ) == 0 )
                                         {
                                             Mix_PlayChannel( 3, f4, -1 );
                                         }
@@ -810,7 +1019,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_b:
                                         bigButtons[4].keyPressed( keyDown );
-                                        if ( Mix_Playing( 4 ) == 0 )
+                                        if( Mix_Playing( 4 ) == 0 )
                                         {
                                             Mix_PlayChannel( 4, g4, -1 );
                                         }
@@ -818,7 +1027,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_n:
                                         bigButtons[5].keyPressed( keyDown );
-                                        if ( Mix_Playing( 5 ) == 0 )
+                                        if( Mix_Playing( 5 ) == 0 )
                                         {
                                             Mix_PlayChannel( 5, a4, -1 );
                                         }
@@ -826,7 +1035,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_m:
                                         bigButtons[6].keyPressed( keyDown );
-                                        if ( Mix_Playing( 6 ) == 0 )
+                                        if( Mix_Playing( 6 ) == 0 )
                                         {
                                             Mix_PlayChannel( 6, h4, -1 );
                                         }
@@ -834,7 +1043,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_t:
                                         bigButtons[7].keyPressed( keyDown );
-                                        if ( Mix_Playing( 7 ) == 0 )
+                                        if( Mix_Playing( 7 ) == 0 )
                                         {
                                             Mix_PlayChannel( 7, c5, -1 );
                                         }
@@ -842,7 +1051,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_y:
                                         bigButtons[8].keyPressed( keyDown );
-                                        if ( Mix_Playing( 8 ) == 0 )
+                                        if( Mix_Playing( 8 ) == 0 )
                                         {
                                             Mix_PlayChannel( 8, d5, -1 );
                                         }
@@ -850,7 +1059,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_u:
                                         bigButtons[9].keyPressed( keyDown );
-                                        if ( Mix_Playing( 9 ) == 0 )
+                                        if( Mix_Playing( 9 ) == 0 )
                                         {
                                             Mix_PlayChannel( 9, e5, -1 );
                                         }
@@ -858,7 +1067,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_i:
                                         bigButtons[10].keyPressed( keyDown );
-                                        if ( Mix_Playing( 10 ) == 0 )
+                                        if( Mix_Playing( 10 ) == 0 )
                                         {
                                             Mix_PlayChannel( 10, f5, -1 );
                                         }
@@ -866,7 +1075,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_o:
                                         bigButtons[11].keyPressed( keyDown );
-                                        if ( Mix_Playing( 11 ) == 0 )
+                                        if( Mix_Playing( 11 ) == 0 )
                                         {
                                             Mix_PlayChannel( 11, g5, -1 );
                                         }
@@ -874,7 +1083,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_p:
                                         bigButtons[12].keyPressed( keyDown );
-                                        if ( Mix_Playing( 12 ) == 0 )
+                                        if( Mix_Playing( 12 ) == 0 )
                                         {
                                             Mix_PlayChannel( 12, a5, -1 );
                                         }
@@ -882,7 +1091,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_LEFTBRACKET:
                                         bigButtons[13].keyPressed( keyDown );
-                                        if ( Mix_Playing( 13 ) == 0 )
+                                        if( Mix_Playing( 13 ) == 0 )
                                         {
                                             Mix_PlayChannel( 13, h5, -1 );
                                         }
@@ -890,7 +1099,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_RIGHTBRACKET:
                                         bigButtons[14].keyPressed( keyDown );
-                                        if ( Mix_Playing( 14 ) == 0 )
+                                        if( Mix_Playing( 14 ) == 0 )
                                         {
                                             Mix_PlayChannel( 14, c6, -1 );
                                         }
@@ -898,7 +1107,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_s:
                                         smallButtons[0].keyPressed( keyDown );
-                                        if ( Mix_Playing( 15 ) == 0 )
+                                        if( Mix_Playing( 15 ) == 0 )
                                         {
                                             Mix_PlayChannel( 15, cis4, -1 );
                                         }
@@ -906,7 +1115,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_d:
                                         smallButtons[1].keyPressed( keyDown );
-                                        if ( Mix_Playing( 16 ) == 0 )
+                                        if( Mix_Playing( 16 ) == 0 )
                                         {
                                             Mix_PlayChannel( 16, dis4, -1 );
                                         }
@@ -914,7 +1123,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_g:
                                         smallButtons[2].keyPressed( keyDown );
-                                        if ( Mix_Playing( 17 ) == 0 )
+                                        if( Mix_Playing( 17 ) == 0 )
                                         {
                                             Mix_PlayChannel( 17, fis4, -1 );
                                         }
@@ -922,7 +1131,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_h:
                                         smallButtons[3].keyPressed( keyDown );
-                                        if ( Mix_Playing( 18 ) == 0 )
+                                        if( Mix_Playing( 18 ) == 0 )
                                         {
                                             Mix_PlayChannel( 18, gis4, -1 );
                                         }
@@ -930,7 +1139,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_j:
                                         smallButtons[4].keyPressed( keyDown );
-                                        if ( Mix_Playing( 19 ) == 0 )
+                                        if( Mix_Playing( 19 ) == 0 )
                                         {
                                             Mix_PlayChannel( 19, ais4, -1 );
                                         }
@@ -938,7 +1147,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_6:
                                         smallButtons[5].keyPressed( keyDown );
-                                        if ( Mix_Playing( 20 ) == 0 )
+                                        if( Mix_Playing( 20 ) == 0 )
                                         {
                                             Mix_PlayChannel( 20, cis5, -1 );
                                         }
@@ -946,7 +1155,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_7:
                                         smallButtons[6].keyPressed( keyDown );
-                                        if ( Mix_Playing( 21 ) == 0 )
+                                        if( Mix_Playing( 21 ) == 0 )
                                         {
                                             Mix_PlayChannel( 21, dis5, -1 );
                                         }
@@ -954,7 +1163,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_9:
                                         smallButtons[7].keyPressed( keyDown );
-                                        if ( Mix_Playing( 22 ) == 0 )
+                                        if( Mix_Playing( 22 ) == 0 )
                                         {
                                             Mix_PlayChannel( 22, fis5, -1 );
                                         }
@@ -962,7 +1171,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_0:
                                         smallButtons[8].keyPressed( keyDown );
-                                        if ( Mix_Playing( 23 ) == 0 )
+                                        if( Mix_Playing( 23 ) == 0 )
                                         {
                                             Mix_PlayChannel( 23, gis5, -1 );
                                         }
@@ -970,7 +1179,7 @@ int main( int argc, char* args[] )
 
                                     case SDLK_MINUS:
                                         smallButtons[9].keyPressed( keyDown );
-                                        if ( Mix_Playing( 24 ) == 0 )
+                                        if( Mix_Playing( 24 ) == 0 )
                                         {
                                             Mix_PlayChannel( 24, ais5, -1 );
                                         }
@@ -982,7 +1191,7 @@ int main( int argc, char* args[] )
                                 {
                                     keyDown = false;
 
-                                    switch ( e.key.keysym.sym )
+                                    switch( e.key.keysym.sym )
                                     {
                                     case SDLK_1:
                                         frontLayerTexture.transparency( 255 );
@@ -990,127 +1199,127 @@ int main( int argc, char* args[] )
 
                                     case SDLK_z:
                                         bigButtons[0].keyPressed( keyDown );
-                                        Mix_HaltChannel( 0 );
+                                        Mix_ExpireChannel( 0, 50 );
                                         break;
 
                                     case SDLK_x:
                                         bigButtons[1].keyPressed( keyDown );
-                                        Mix_HaltChannel( 1 );
+                                        Mix_ExpireChannel( 1, 50 );
                                         break;
 
                                     case SDLK_c:
                                         bigButtons[2].keyPressed( keyDown );
-                                        Mix_HaltChannel( 2 );
+                                        Mix_ExpireChannel( 2, 50 );
                                         break;
 
                                     case SDLK_v:
                                         bigButtons[3].keyPressed( keyDown );
-                                        Mix_HaltChannel( 3 );
+                                        Mix_ExpireChannel( 3, 50 );
                                         break;
 
                                     case SDLK_b:
                                         bigButtons[4].keyPressed( keyDown );
-                                        Mix_HaltChannel( 4 );
+                                        Mix_ExpireChannel( 4, 50 );
                                         break;
 
                                     case SDLK_n:
                                         bigButtons[5].keyPressed( keyDown );
-                                        Mix_HaltChannel( 5 );
+                                        Mix_ExpireChannel( 5, 50 );
                                         break;
 
                                     case SDLK_m:
                                         bigButtons[6].keyPressed( keyDown );
-                                        Mix_HaltChannel( 6 );
+                                        Mix_ExpireChannel( 6, 50 );
                                         break;
 
                                     case SDLK_t:
                                         bigButtons[7].keyPressed( keyDown );
-                                        Mix_HaltChannel( 7 );
+                                        Mix_ExpireChannel( 7, 50 );
                                         break;
 
                                     case SDLK_y:
                                         bigButtons[8].keyPressed( keyDown );
-                                        Mix_HaltChannel( 8 );
+                                        Mix_ExpireChannel( 8, 50 );
                                         break;
 
                                     case SDLK_u:
                                         bigButtons[9].keyPressed( keyDown );
-                                        Mix_HaltChannel( 9 );
+                                        Mix_ExpireChannel( 9, 50 );
                                         break;
 
                                     case SDLK_i:
                                         bigButtons[10].keyPressed( keyDown );
-                                        Mix_HaltChannel( 10 );
+                                        Mix_ExpireChannel( 10, 50 );
                                         break;
 
                                     case SDLK_o:
                                         bigButtons[11].keyPressed( keyDown );
-                                        Mix_HaltChannel( 11 );
+                                        Mix_ExpireChannel( 11, 50 );
                                         break;
 
                                     case SDLK_p:
                                         bigButtons[12].keyPressed( keyDown );
-                                        Mix_HaltChannel( 12 );
+                                        Mix_ExpireChannel( 12, 50 );
                                         break;
 
                                     case SDLK_LEFTBRACKET:
                                         bigButtons[13].keyPressed( keyDown );
-                                        Mix_HaltChannel( 13 );
+                                        Mix_ExpireChannel( 13, 50 );
                                         break;
 
                                     case SDLK_RIGHTBRACKET:
                                         bigButtons[14].keyPressed( keyDown );
-                                        Mix_HaltChannel( 14 );
+                                        Mix_ExpireChannel( 14, 50 );
                                         break;
 
                                     case SDLK_s:
                                         smallButtons[0].keyPressed( keyDown );
-                                        Mix_HaltChannel( 15 );
+                                        Mix_ExpireChannel( 15, 50 );
                                         break;
 
                                     case SDLK_d:
                                         smallButtons[1].keyPressed( keyDown );
-                                        Mix_HaltChannel( 16 );
+                                        Mix_ExpireChannel( 16, 50 );
                                         break;
 
                                     case SDLK_g:
                                         smallButtons[2].keyPressed( keyDown );
-                                        Mix_HaltChannel( 17 );
+                                        Mix_ExpireChannel( 17, 50 );
                                         break;
 
                                     case SDLK_h:
                                         smallButtons[3].keyPressed( keyDown );
-                                        Mix_HaltChannel( 18 );
+                                        Mix_ExpireChannel( 18, 50 );
                                         break;
 
                                     case SDLK_j:
                                         smallButtons[4].keyPressed( keyDown );
-                                        Mix_HaltChannel( 19 );
+                                        Mix_ExpireChannel( 19, 50 );
                                         break;
 
                                     case SDLK_6:
                                         smallButtons[5].keyPressed( keyDown );
-                                        Mix_HaltChannel( 20 );
+                                        Mix_ExpireChannel( 20, 50 );
                                         break;
 
                                     case SDLK_7:
                                         smallButtons[6].keyPressed( keyDown );
-                                        Mix_HaltChannel( 21 );
+                                        Mix_ExpireChannel( 21, 50 );
                                         break;
 
                                     case SDLK_9:
                                         smallButtons[7].keyPressed( keyDown );
-                                        Mix_HaltChannel( 22 );
+                                        Mix_ExpireChannel( 22, 50 );
                                         break;
 
                                     case SDLK_0:
                                         smallButtons[8].keyPressed( keyDown );
-                                        Mix_HaltChannel( 23 );
+                                        Mix_ExpireChannel( 23, 50 );
                                         break;
 
                                     case SDLK_MINUS:
                                         smallButtons[9].keyPressed( keyDown );
-                                        Mix_HaltChannel( 24 );
+                                        Mix_ExpireChannel( 24, 50 );
                                         break;
                                     }
                                 }
@@ -1124,11 +1333,11 @@ int main( int argc, char* args[] )
                             //Render textures to screen
                             backgroundTexture.render( 0, 0, &spriteClip[ BUTTON_BACKGROUND ] );
 
-                            for ( int i = 0; i < totalBigButtons; i++ )
+                            for( int i = 0; i < totalBigButtons; i++ )
                             {
                                 bigButtons[ i ].render();
                             }
-                            for ( int i = 0; i < totalSmallButtons; i++ )
+                            for( int i = 0; i < totalSmallButtons; i++ )
                             {
                                 smallButtons[ i ].render();
                             }
